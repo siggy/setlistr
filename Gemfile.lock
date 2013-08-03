@@ -44,6 +44,5 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport (~> 3.2.14)
-  daemons
   tweetstream
   twitter
