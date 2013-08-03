@@ -22,8 +22,6 @@ loop do
 
   tweets += results.select do |r|
     r.created_at < END_TIME
-  end.map do |r|
-    [r.created_at.to_i, r.text]
   end
 
   max_id = results.last.id
@@ -32,6 +30,8 @@ loop do
   puts "retrieved #{tweets.count} tweets / #{Time.at(results.last.created_at)} / #{START_TIME}"
 end
 
-File.open(File.join(File.dirname(__FILE__), "../config/phish_stream.yml"), 'w+') do |f|
-  f.write(tweets.sort_by { |t| t[0] }.to_yaml)
+File.open(File.join(File.dirname(__FILE__), "../config/phish_tweets.json"), 'w+') do |f|
+  tweets.reverse.each do |t|
+    f.puts(t.to_hash.to_json)
+  end
 end
