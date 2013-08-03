@@ -16,24 +16,21 @@ end
 puts "#{tweets.count} tweets loaded"
 
 escaped_songs = songs.map { |w| Regexp.escape(w) }
-song_hash = Hash[escaped_songs.map {|v| [v,0]}]
+song_hash = Hash[escaped_songs.map {|v| [v,[]]}]
 song_regex = /#{escaped_songs.join('|')}/
 
 tweets.each do |tweet|
-  puts tweet
   next if !(song_regex === tweet[1])
 
   escaped_songs.each do |song|
     if tweet[1] =~ /#{song}/
-      puts tweet[1]
-
-      song_hash[song] += 1
+      song_hash[song] << tweet[0]
     end
   end
 end
 
-song_hash.to_a.sort_by { |s| s[1] }.each do |s|
-  puts "#{s[0]}: #{s[1]}" if s[1] > 0
+song_hash.to_a.sort_by { |s| s[1].count }.each do |s|
+  puts "#{s[0]}: #{s[1].count}" if s[1].count > 0
 end
 
 
