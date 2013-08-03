@@ -1,27 +1,27 @@
 setlistr
 ===========
 
-test and mock data
+Autogenerate concert setlists via the Twitter streaming API.
+
+Run
+---
+    # put relevant credentials in config/credentials.yml
+    ruby script/setlist.rb
+
+Test and mock data
 ------------------
-scrape songs:
-
-  http://phish.net/song/
-  $("tbody tr td:first-child a").each ( function (s, l) { console.log(l.text) })
-
 scrape tweets:
 
-  ruby script/tweet_scraper.rb
+    ruby script/tweet_scraper.rb
 
-run
----
-Run:
+scrape songs:
 
-  ruby script/setlist.rb
+    http://phish.net/song/
+    $("tbody tr td:first-child a").each ( function (s, l) { console.log(l.text) })
 
 TODO
 ----
 
-  twitter streaming
-  gruvr.com integration for concert calendar
-  gracenote integration for song lists
-  live updating site
+* gruvr.com integration for concert calendar
+* gracenote integration for song lists
+* live updating site
