@@ -7,6 +7,11 @@ Run
 ---
     # put relevant credentials in config/credentials.yml
     ruby script/setlist.rb
+    
+Live demo
+---------
+
+  https://twitter.com/thesetlistr
 
 Test and mock data
 ------------------
