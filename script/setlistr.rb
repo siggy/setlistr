@@ -6,9 +6,8 @@ require 'active_support'
 require 'twitter'
 require 'tweetstream'
 
-ARTIST = 'phish'
-
 PROD = false
+ARTIST = 'phish'
 
 SONG_LIMIT = 5 * 60
 BREAK_LIMIT = SONG_LIMIT * 5
@@ -58,13 +57,15 @@ def output_song(setlist_elem)
   end
 end
 
+# read tweets either from twitter streaming api or file
 tweets = Queue.new
-
 if PROD
   Thread.new do
-    TweetStream::Client.new.track('twitter') do |tweet|
-      nest if tweet.text =~ /RT|set/ # skip RT's and setlist tweets
-      tweets << tweet.to_hash
+    TweetStream::Client.new.track(ARTIST) do |tweet|
+      next if tweet.text =~ /RT|set/ # skip RT's and setlist tweets
+      next if tweet.user.id == CREDENTIALS['twitter_user_id'] # skip tweets belonging to the user that is tweeting
+      puts tweet.to_hash
+      tweets << JSON.parse(tweet.to_hash.to_json)
     end
   end
 else
@@ -77,12 +78,16 @@ end
 setlist = []
 last_song = ''
 
+# main consumer loop
 loop do
+  break if !PROD && tweets.size == 0
+
   tweet = tweets.pop
   tweet_text = normalize(tweet['text'])
   song = Regexp.escape(tweet_text.match(song_regex).to_s)
   if (song != '')
     # song matched
+    puts "#{song}\n#{tweet['text']}" if PROD
     song_to_tweets[song] << tweet
 
     end_time = Time.parse(song_to_tweets[song].last['created_at']).to_i
@@ -91,7 +96,7 @@ loop do
     # check for song cluster
     cluster = song_to_tweets[song].select do |tweet|
       t = Time.parse(tweet['created_at']).to_i
-      t > start_time && t < end_time
+      t >= start_time && t <= end_time
     end
 
     if (cluster.size > CLUSTER_MIN) && (cluster.size > song_to_tweets[song].count / 2)
@@ -125,4 +130,3 @@ loop do
     end
   end
 end
-
