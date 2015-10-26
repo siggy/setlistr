@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
 
-gem "activesupport", "~> 3.2.14"
+gem "activesupport"
 gem 'twitter'
 gem 'tweetstream'
